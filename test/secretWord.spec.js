@@ -57,6 +57,13 @@ describe("Secret Word", function() {
         expect(s.indexOf("i", 4)).to.eql(o[2]);
         expect(s.toString()).to.eql("*i*i*i");
     });
+
+    // works both ways! this test is just to show-off (?)
+    it("should reveal from occurrences returned array", function() {
+        var revealed = s.reveal(s.occurrences("i"));
+        expect(true);
+    });
+
     it("should return occurrences", function() {
         expect(s.occurrences("i")).to.eql([1, 3, 5]);
     });
@@ -80,11 +87,20 @@ describe("Secret Word", function() {
         });
     });
 
-    it.skip("should not pass this test", function() {
+    decribe("Setting things", function() {
+        it("should ... ?", function() {
+            s.testProp = "aaa";
+        });
+    });
+
+    it("should not pass this test", function() {
 
         var s = new SecretWord("piriri");
+
+        s.test = "pp";
+        console.log(s["test"]);
         // reveal one char position
-        s.reveal(0);
+        /*s.reveal(0);
         console.log(s[0]);
 
         // reveal from array of char positions
@@ -92,6 +108,6 @@ describe("Secret Word", function() {
         // given occurrences 2nd arg callback, also works both ways! :)
         s.occurrences("i", s.reveal);
         console.log(s.toString());
-        expect(false).to.eql(true);
+        expect(false).to.eql(true);*/
     });
 });

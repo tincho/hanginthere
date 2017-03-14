@@ -9,16 +9,13 @@ function SecretWord(word) {
     this.revealedIds = [];
     this.revealedWord = hideChar.repeat(word.length).split("");
     this.text = word;
-    return new Proxy({}, {
+    return new Proxy(this, {
         get: (function(target, propertyKey, receiver) {
-            this.revealedIds.forEach(function(id) {
-                this.revealedWord[id] = word[id];
-            }, this);
+            this.revealedIds.forEach(propertyAssigner(word, this.revealedWord), this);
+
             if (propertyKey === 'toString') {
-                return this.revealedWord.join.bind(this.revealedWord, "");
+                return constant(this.revealedWord.join(""));
             }
-            // there's no need to expose a text property
-            if (propertyKey === 'text') return this.revealedWord.join("");
 
             if (propertyKey in SecretWord.prototype) {
                 return SecretWord.prototype[propertyKey].bind(this);
@@ -29,13 +26,17 @@ function SecretWord(word) {
             }
 
             if (propertyKey in Array.prototype) {
-                return Array.prototype[propertyKey].bind(this.revealedWord.join(""));
+                return Array.prototype[propertyKey].bind(this.revealedWord);
             }
 
             return this.revealedWord[propertyKey];
-        }).bind(this)
+        }).bind(this),
+        set: function(target, propertyKey, receiver) {
+            debugger
+        }
     });
 }
+
 SecretWord.prototype = {
     reveal: function(pos) {
         if (pos instanceof Array) {
@@ -50,4 +51,18 @@ SecretWord.prototype = {
     is: function(word) {
         return this.text === word;
     }
+};
+
+
+/*function constant(v) {
+    return function() { return v; };
+}*/
+const constant = v => () => v;
+/*function copyProperty(from, to) {
+    return function(property) {
+        to[property] = from[property];
+    }
+};*/
+const propertyAssigner = (from, to) => (property) => {
+    to[property] = from[property]; return to;
 };
