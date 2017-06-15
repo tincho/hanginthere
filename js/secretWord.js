@@ -69,5 +69,3 @@ SecretWord.prototype = {
     return this.revealedWord.join("");
   }
 };
-
-const constant = v => () => v;
